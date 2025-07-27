@@ -29,8 +29,6 @@ typedef enum {
     READ_END = 201,
     CONTINUE = 200,
     BREAK = 199,
-    BINARY_FILE = 100,
-    TEXT_FILE = 99
 } STATUS_CODE_TYPE;
 
 char get_ch(void) {
@@ -119,6 +117,23 @@ void deserialize(unsigned char *in, FILE_INFO *file_info_ptr) {
     file_info_ptr->FILE_SIZE = ntohl(temp1);
     file_info_ptr->BUFFER_SIZE = ntohl(temp2);
 };
+
+STATUS_CODE_TYPE SEND_STATUS(int sock,int code) {
+    int status = htonl(code);
+    int bytes = send(sock,&status,sizeof(int),0);
+    if (bytes != sizeof(status)) return SEND_ERROR;
+    
+    return OK;
+}
+
+STATUS_CODE_TYPE GET_STATUS(int sock) {
+    int code;
+    
+    int bytes = recv(sock,&code,sizeof(int),0);
+    if (bytes != sizeof(code)) return GET_ERROR;
+
+    return code;
+}
 
 STATUS_CODE_TYPE SEND_FILE(int sock,char *file_path) {
     FILE_INFO file_i;
