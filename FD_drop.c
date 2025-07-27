@@ -10,6 +10,7 @@
 #include <stdlib.h>
 #include <dirent.h>
 #include <termios.h>
+#include <stdint.h>
 #define PORT 9160
 
 
